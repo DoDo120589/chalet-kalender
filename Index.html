@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chalet Holland – Kalender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sand: #F5F0E8;
+    --sand-dark: #E8DFD0;
+    --dune: #C4A882;
+    --dune-dark: #A08060;
+    --sea: #2E6B8A;
+    --sea-light: #D6E8F0;
+    --sea-dark: #1A4A62;
+    --green: #4A7C59;
+    --green-light: #D8EDE0;
+    --red: #A03030;
+    --red-light: #F2DADA;
+    --amber: #8A6A20;
+    --amber-light: #F5EBCC;
+    --text: #2A2420;
+    --text-muted: #7A6A5A;
+    --border: rgba(100,80,60,0.15);
+    --border-strong: rgba(100,80,60,0.3);
+    --radius: 10px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--sand);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN ── */
+  #login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 0;
+    background: var(--sand);
+  }
+
+  .login-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 320px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .login-icon {
+    font-size: 48px;
+    margin-bottom: 1rem;
+  }
+
+  .login-card h1 {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .login-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .login-card input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--sand);
+    color: var(--text);
+    margin-bottom: 10px;
+    outline: none;
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+
+  .login-card input:focus {
+    border-color: var(--dune);
+    background: white;
+  }
+
+  .login-card button {
+    width: 100%;
+    padding: 12px;
+    background: var(--sea);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .login-card button:hover { background: var(--sea-dark); }
+
+  .pw-error {
+    color: var(--red);
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  /* ── APP ── */
+  #app { display: none; max-width: 780px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  .app-header h1 {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .app-header .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .logout-btn {
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .logout-btn:hover { background: var(--sand-dark); }
+
+  /* ── CALENDAR HEADER ── */
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .nav-btn {
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-muted);
+    line-height: 1;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover { background: var(--sand); border-color: var(--dune); color: var(--text); }
+
+  .month-title {
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  /* ── WEEKDAY HEADERS ── */
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 0;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .weekday.weekend { color: var(--green); }
+
+  /* ── CALENDAR GRID ── */
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .day {
+    min-height: 72px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .day:hover { border-color: var(--dune); box-shadow: 0 2px 8px rgba(0,0,0,0.08); transform: translateY(-1px); }
+
+  .day.empty { background: transparent; border-color: transparent; cursor: default; }
+  .day.empty:hover { transform: none; box-shadow: none; }
+
+  .day.today { border-color: var(--dune); border-width: 2px; }
+
+  .day.weekend { background: var(--green-light); }
+  .day.weekend:hover { border-color: var(--green); }
+
+  .day.holiday { background: var(--sea-light); }
+  .day.holiday:hover { border-color: var(--sea); }
+
+  .day.booked { background: var(--red-light); cursor: pointer; }
+  .day.booked:hover { border-color: var(--red); }
+
+  .day.booked-start { border-radius: var(--radius) var(--radius) var(--radius) var(--radius); }
+
+  .day-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1;
+  }
+
+  .day.weekend .day-num { color: var(--green); }
+  .day.holiday .day-num { color: var(--sea); }
+  .day.booked .day-num { color: var(--red); }
+  .day.today .day-num { color: var(--dune-dark); }
+
+  .day-label {
+    font-size: 10px;
+    margin-top: 4px;
+    line-height: 1.3;
+    color: var(--text-muted);
+  }
+
+  .day.booked .day-label { color: var(--red); font-weight: 600; }
+  .day.holiday .day-label { color: var(--sea); }
+
+  .day-note {
+    font-size: 9px;
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-style: italic;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(42,36,32,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 1rem;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    border: 1px solid var(--border);
+  }
+
+  .modal h3 {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group { margin-bottom: 14px; }
+
+  .form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--text);
+    background: var(--sand);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus { border-color: var(--dune); background: white; }
+
+  .form-group textarea { resize: none; height: 70px; }
+
+  .form-error {
+    color: var(--red);
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+    padding: 8px 10px;
+    background: var(--red-light);
+    border-radius: 6px;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+  }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    background: none;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { background: var(--sand); }
+
+  .btn.primary {
+    background: var(--sea);
+    color: white;
+    border-color: var(--sea);
+  }
+
+  .btn.primary:hover { background: var(--sea-dark); }
+
+  .btn.danger { color: var(--red); border-color: rgba(160,48,48,0.3); }
+  .btn.danger:hover { background: var(--red-light); }
+
+  .booking-info {
+    background: var(--sand);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .booking-info .name {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .booking-info .dates {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .booking-info .note {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 14px;
+    grid-column: 1 / -1;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 500px) {
+    .day { min-height: 52px; padding: 4px 5px; }
+    .day-num { font-size: 12px; }
+    .day-label { font-size: 9px; }
+    .day-note { display: none; }
+    .month-title { font-size: 16px; }
+    .legend { font-size: 11px; gap: 8px; }
+    .modal { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-card">
+    <div class="login-icon">🏡</div>
+    <h1>Chalet Holland</h1>
+    <p>Familien-Belegungsplan</p>
+    <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
+    <button onclick="checkPw()">Anmelden</button>
+    <div class="pw-error" id="pw-error">Falsches Passwort – bitte erneut versuchen.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="app-header">
+    <div>
+      <h1>🏡 Chalet Holland</h1>
+      <div class="subtitle">Familien-Belegungskalender</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Abmelden</button>
+  </div>
+
+  <div class="cal-nav">
+    <button class="nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+    <div class="month-title" id="month-title"></div>
+    <button class="nav-btn" onclick="changeMonth(1)">&#8250;</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#D8EDE0;border-color:#4A7C59"></div>
+      <span>Wochenende</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#D6E8F0;border-color:#2E6B8A"></div>
+      <span>Feiertag (🇳🇱/🇩🇪)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#F2DADA;border-color:#A03030"></div>
+      <span>Belegt</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:white;border-color:#C4A882"></div>
+      <span>Verfügbar – klicken zum Buchen</span>
+    </div>
+  </div>
+
+  <div class="weekdays">
+    <div class="weekday">Mo</div>
+    <div class="weekday">Di</div>
+    <div class="weekday">Mi</div>
+    <div class="weekday">Do</div>
+    <div class="weekday">Fr</div>
+    <div class="weekday weekend">Sa</div>
+    <div class="weekday weekend">So</div>
+  </div>
+
+  <div class="calendar" id="calendar"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" style="display:none" onclick="handleModalBgClick(event)">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbzdLQcjakDM2GwV67E_uTxfboLDCJZptU8JU99pOvKJ_hAem6o-uXWLVJVyXO61puvA/exec";
+const PASSWORD = "UBTJFSNM";
+
+let bookings = [];
+let cur = new Date();
+cur.setDate(1);
+
+// ── FEIERTAGE ──
+function getHolidays(year) {
+  // Osterberechnung (Gauss)
+  const a = year % 19, b = Math.floor(year / 100), c = year % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  const easter = new Date(year, month - 1, day);
+
+  function addDays(d, n) {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  function fmt(d) {
+    return d.toISOString().split("T")[0];
+  }
+
+  const h = {};
+
+  // Niederländische Feiertage
+  h[fmt(new Date(year, 0, 1))]    = "🇳🇱 Nieuwjaarsdag";
+  h[fmt(addDays(easter, -2))]     = "🇳🇱 Goede Vrijdag";
+  h[fmt(easter)]                  = "🇳🇱 1. Paasdag";
+  h[fmt(addDays(easter, 1))]      = "🇳🇱 2. Paasdag";
+  h[fmt(new Date(year, 3, 27))]   = "🇳🇱 Koningsdag";
+  h[fmt(new Date(year, 4, 5))]    = "🇳🇱 Bevrijdingsdag";
+  h[fmt(addDays(easter, 39))]     = "🇳🇱 Hemelvaartsdag";
+  h[fmt(addDays(easter, 49))]     = "🇳🇱 1. Pinksterdag";
+  h[fmt(addDays(easter, 50))]     = "🇳🇱 2. Pinksterdag";
+  h[fmt(new Date(year, 11, 25))]  = "🇳🇱 1. Kerstdag";
+  h[fmt(new Date(year, 11, 26))]  = "🇳🇱 2. Kerstdag";
+
+  // Deutsche Feiertage (NRW)
+  const de = {};
+  de[fmt(new Date(year, 0, 1))]   = "🇩🇪 Neujahr";
+  de[fmt(addDays(easter, -2))]    = "🇩🇪 Karfreitag";
+  de[fmt(addDays(easter, 1))]     = "🇩🇪 Ostermontag";
+  de[fmt(new Date(year, 4, 1))]   = "🇩🇪 Tag der Arbeit";
+  de[fmt(addDays(easter, 39))]    = "🇩🇪 Christi Himmelfahrt";
+  de[fmt(addDays(easter, 50))]    = "🇩🇪 Pfingstmontag";
+  de[fmt(new Date(year, 9, 3))]   = "🇩🇪 Tag d. Deutschen Einheit";
+  de[fmt(new Date(year, 10, 1))]  = "🇩🇪 Allerheiligen";
+  de[fmt(new Date(year, 11, 25))] = "🇩🇪 1. Weihnachtstag";
+  de[fmt(new Date(year, 11, 26))] = "🇩🇪 2. Weihnachtstag";
+
+  // Zusammenführen (NL hat Vorrang)
+  for (const [k, v] of Object.entries(de)) {
+    if (!h[k]) h[k] = v;
+    else if (h[k] !== v) h[k] = h[k] + " / " + v.replace("🇩🇪 ", "");
+  }
+
+  return h;
+}
+
+// ── AUTH ──
+function checkPw() {
+  const val = document.getElementById("pw-input").value;
+  if (val === PASSWORD) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadBookings();
+  } else {
+    document.getElementById("pw-error").style.display = "block";
+    document.getElementById("pw-input").value = "";
+    document.getElementById("pw-input").focus();
+  }
+}
+
+function logout() {
+  document.getElementById("app").style.display = "none";
+  document.getElementById("login").style.display = "flex";
+  document.getElementById("pw-input").value = "";
+  document.getElementById("pw-error").style.display = "none";
+}
+
+document.getElementById("pw-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkPw();
+});
+
+// ── HELPERS ──
+function toISO(d) { return d.toISOString().split("T")[0]; }
+
+function isBooked(dateStr) {
+  return bookings.find(b => dateStr >= b.von && dateStr <= b.bis);
+}
+
+function formatDate(s) {
+  if (!s) return "";
+  const [y, m, d] = s.split("-");
+  return `${d}.${m}.${y}`;
+}
+
+// ── RENDER ──
+function render() {
+  const y = cur.getFullYear(), m = cur.getMonth();
+  const holidays = getHolidays(y);
+  const today = toISO(new Date());
+
+  document.getElementById("month-title").textContent =
+    cur.toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+
+  const first = new Date(y, m, 1);
+  const last = new Date(y, m + 1, 0);
+  let startDow = first.getDay();
+  if (startDow === 0) startDow = 7;
+
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+
+  for (let i = 1; i < startDow; i++) {
+    const el = document.createElement("div");
+    el.className = "day empty";
+    cal.appendChild(el);
+  }
+
+  for (let d = 1; d <= last.getDate(); d++) {
+    const date = new Date(y, m, d);
+    const dow = date.getDay();
+    const dateStr = toISO(date);
+    const holiday = holidays[dateStr];
+    const booking = isBooked(dateStr);
+    const isToday = dateStr === today;
+    const isWeekend = dow === 0 || dow === 6;
+
+    const el = document.createElement("div");
+    el.className = "day";
+    if (booking) el.className += " booked";
+    else if (holiday) el.className += " holiday";
+    else if (isWeekend) el.className += " weekend";
+    if (isToday) el.className += " today";
+
+    const numDiv = document.createElement("div");
+    numDiv.className = "day-num";
+    numDiv.textContent = d;
+    el.appendChild(numDiv);
+
+    if (booking && dateStr === booking.von) {
+      const lbl = document.createElement("div");
+      lbl.className = "day-label";
+      lbl.textContent = booking.name;
+      el.appendChild(lbl);
+      if (booking.notiz) {
+        const note = document.createElement("div");
+        note.className = "day-note";
+        note.textContent = booking.notiz;
+        el.appendChild(note);
+      }
+    } else if (booking) {
+      const lbl = document.createElement("div");
+      lbl.className = "day-label";
+      lbl.textContent = booking.name;
+      el.appendChild(lbl);
+    }
+
+    if (holiday && !booking) {
+      const lbl = document.createElement("div");
+      lbl.className = "day-label";
+      lbl.textContent = holiday;
+      el.appendChild(lbl);
+    }
+
+    if (booking) {
+      el.onclick = () => showBooking(booking);
+    } else {
+      el.onclick = () => showNew(dateStr);
+    }
+
+    cal.appendChild(el);
+  }
+}
+
+function changeMonth(dir) {
+  cur.setMonth(cur.getMonth() + dir);
+  render();
+}
+
+// ── DATA ──
+async function loadBookings() {
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = '<div class="loading">Buchungen werden geladen...</div>';
+  try {
+    const r = await fetch(API + "?action=read");
+    bookings = await r.json();
+    if (!Array.isArray(bookings)) bookings = [];
+  } catch (e) {
+    bookings = [];
+  }
+  render();
+}
+
+// ── MODAL ──
+function openModal(html) {
+  document.getElementById("modal-content").innerHTML = html;
+  document.getElementById("modal-bg").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal-bg").style.display = "none";
+}
+
+function handleModalBgClick(e) {
+  if (e.target.id === "modal-bg") closeModal();
+}
+
+// ── NEW BOOKING ──
+function showNew(dateStr) {
+  openModal(`
+    <h3>Neue Buchung</h3>
+    <div class="form-group">
+      <label>Von</label>
+      <input type="date" id="f-von" value="${dateStr}">
+    </div>
+    <div class="form-group">
+      <label>Bis</label>
+      <input type="date" id="f-bis" value="${dateStr}">
+    </div>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="f-name" placeholder="Dein Name" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label>Notiz (optional)</label>
+      <textarea id="f-notiz" placeholder="z.B. Osterurlaub mit Kindern"></textarea>
+    </div>
+    <div class="form-error" id="f-error"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="closeModal()">Abbrechen</button>
+      <button class="btn primary" onclick="saveNew()">Buchen</button>
+    </div>
+  `);
+  document.getElementById("f-name").focus();
+}
+
+async function saveNew() {
+  const von   = document.getElementById("f-von").value;
+  const bis   = document.getElementById("f-bis").value;
+  const name  = document.getElementById("f-name").value.trim();
+  const notiz = document.getElementById("f-notiz").value.trim();
+  const err   = document.getElementById("f-error");
+
+  if (!von || !bis || !name) {
+    showError(err, "Bitte alle Pflichtfelder ausfüllen.");
+    return;
+  }
+  if (bis < von) {
+    showError(err, "'Bis'-Datum muss nach dem 'Von'-Datum liegen.");
+    return;
+  }
+  const conflict = bookings.find(b => !(bis < b.von || von > b.bis));
+  if (conflict) {
+    showError(err, `Zeitraum überschneidet sich mit der Buchung von ${conflict.name} (${formatDate(conflict.von)}–${formatDate(conflict.bis)}).`);
+    return;
+  }
+
+  err.style.display = "none";
+  const btn = document.querySelector(".btn.primary");
+  btn.textContent = "Wird gespeichert...";
+  btn.disabled = true;
+
+  try {
+    await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ action: "create", von, bis, name, notiz })
+    });
+    closeModal();
+    await loadBookings();
+  } catch (e) {
+    showError(err, "Fehler beim Speichern. Bitte erneut versuchen.");
+    btn.textContent = "Buchen";
+    btn.disabled = false;
+  }
+}
+
+// ── VIEW BOOKING ──
+function showBooking(b) {
+  openModal(`
+    <h3>Buchungsdetails</h3>
+    <div class="booking-info">
+      <div class="name">${escHtml(b.name)}</div>
+      <div class="dates">${formatDate(b.von)} – ${formatDate(b.bis)}</div>
+      ${b.notiz ? `<div class="note">${escHtml(b.notiz)}</div>` : ""}
+    </div>
+    <div class="btn-row">
+      <button class="btn danger" onclick="deleteBooking('${b.id}')">Löschen</button>
+      <button class="btn" onclick="editBooking(${JSON.stringify(b).split('"').join('&quot;')})">Bearbeiten</button>
+      <button class="btn primary" onclick="closeModal()">Schließen</button>
+    </div>
+  `);
+}
+
+// ── DELETE ──
+async function deleteBooking(id) {
+  if (!confirm("Buchung wirklich löschen?")) return;
+  try {
+    await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ action: "delete", id })
+    });
+    closeModal();
+    await loadBookings();
+  } catch (e) {
+    alert("Fehler beim Löschen. Bitte erneut versuchen.");
+  }
+}
+
+// ── EDIT ──
+function editBooking(b) {
+  openModal(`
+    <h3>Buchung bearbeiten</h3>
+    <div class="form-group">
+      <label>Von</label>
+      <input type="date" id="f-von" value="${b.von}">
+    </div>
+    <div class="form-group">
+      <label>Bis</label>
+      <input type="date" id="f-bis" value="${b.bis}">
+    </div>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="f-name" value="${escHtml(b.name)}">
+    </div>
+    <div class="form-group">
+      <label>Notiz (optional)</label>
+      <textarea id="f-notiz">${escHtml(b.notiz || "")}</textarea>
+    </div>
+    <div class="form-error" id="f-error"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="closeModal()">Abbrechen</button>
+      <button class="btn primary" onclick="saveEdit('${b.id}')">Speichern</button>
+    </div>
+  `);
+}
+
+async function saveEdit(id) {
+  const von   = document.getElementById("f-von").value;
+  const bis   = document.getElementById("f-bis").value;
+  const name  = document.getElementById("f-name").value.trim();
+  const notiz = document.getElementById("f-notiz").value.trim();
+  const err   = document.getElementById("f-error");
+
+  if (!von || !bis || !name) {
+    showError(err, "Bitte alle Pflichtfelder ausfüllen.");
+    return;
+  }
+  if (bis < von) {
+    showError(err, "'Bis'-Datum muss nach dem 'Von'-Datum liegen.");
+    return;
+  }
+  const conflict = bookings.find(b => b.id !== id && !(bis < b.von || von > b.bis));
+  if (conflict) {
+    showError(err, `Zeitraum überschneidet sich mit der Buchung von ${conflict.name}.`);
+    return;
+  }
+
+  err.style.display = "none";
+  const btn = document.querySelector(".btn.primary");
+  btn.textContent = "Wird gespeichert...";
+  btn.disabled = true;
+
+  try {
+    await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({ action: "update", id, von, bis, name, notiz })
+    });
+    closeModal();
+    await loadBookings();
+  } catch (e) {
+    showError(err, "Fehler beim Speichern.");
+    btn.textContent = "Speichern";
+    btn.disabled = false;
+  }
+}
+
+// ── UTILS ──
+function showError(el, msg) {
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+</script>
+</body>
+</html>
