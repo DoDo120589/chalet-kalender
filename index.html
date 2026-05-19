@@ -521,7 +521,7 @@
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwhlZpydG1kGGwqkaPqmd8RbdE6AnqzT3xx_uXBNms-NXWn_9QvdAWLkxRtE5ChUYY/exec";
+const API = "https://script.google.com/macros/s/AKfycbyQumj2PAOQAQJ7Fv7dMe78-xXrNNAdj8N6kh1BpGCmj6Q2fYw4cOP5V2GhUqaybHYJ/exec";
 const PASSWORD = "UBTJFSNM";
 
 let bookings = [];
@@ -712,17 +712,25 @@ function changeMonth(dir) {
 }
 
 // ── DATA ──
-async function loadBookings() {
+function loadBookings() {
   const cal = document.getElementById("calendar");
   cal.innerHTML = '<div class="loading">Buchungen werden geladen...</div>';
-  try {
-    const r = await fetch(API + "?action=read");
-    bookings = await r.json();
-    if (!Array.isArray(bookings)) bookings = [];
-  } catch (e) {
+  const cbName = "jsonpCb_" + Date.now();
+  const script = document.createElement("script");
+  window[cbName] = function(data) {
+    bookings = Array.isArray(data) ? data : [];
+    delete window[cbName];
+    document.body.removeChild(script);
+    render();
+  };
+  script.src = API + "?action=read&callback=" + cbName;
+  script.onerror = function() {
     bookings = [];
-  }
-  render();
+    delete window[cbName];
+    document.body.removeChild(script);
+    render();
+  };
+  document.body.appendChild(script);
 }
 
 // ── MODAL ──
@@ -797,10 +805,12 @@ async function saveNew() {
   try {
     await fetch(API, {
       method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ action: "create", von, bis, name, notiz })
     });
     closeModal();
-    await loadBookings();
+    setTimeout(() => loadBookings(), 1000);
   } catch (e) {
     showError(err, "Fehler beim Speichern. Bitte erneut versuchen.");
     btn.textContent = "Buchen";
@@ -831,10 +841,12 @@ async function deleteBooking(id) {
   try {
     await fetch(API, {
       method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ action: "delete", id })
     });
     closeModal();
-    await loadBookings();
+    setTimeout(() => loadBookings(), 1000);
   } catch (e) {
     alert("Fehler beim Löschen. Bitte erneut versuchen.");
   }
@@ -897,10 +909,12 @@ async function saveEdit(id) {
   try {
     await fetch(API, {
       method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ action: "update", id, von, bis, name, notiz })
     });
     closeModal();
-    await loadBookings();
+    setTimeout(() => loadBookings(), 1000);
   } catch (e) {
     showError(err, "Fehler beim Speichern.");
     btn.textContent = "Speichern";
