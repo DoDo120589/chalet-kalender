@@ -531,14 +531,14 @@ cur.setDate(1);
 // ── FEIERTAGE ──
 function getHolidays(year) {
   // Osterberechnung (Gauss)
-  const a = year % 19, b = Math.floor(year / 100), c = year % 100;
-  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4), k = c % 4;
-  const l = (32 + 2 * e + 2 * i - h - k) % 7;
-  const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31);
-  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  const ga = year % 19, gb = Math.floor(year / 100), gc = year % 100;
+  const gd = Math.floor(gb / 4), ge = gb % 4, gf = Math.floor((gb + 8) / 25);
+  const gg = Math.floor((gb - gf + 1) / 3), gh = (19 * ga + gb - gd - gg + 15) % 30;
+  const gi = Math.floor(gc / 4), gk = gc % 4;
+  const gl = (32 + 2 * ge + 2 * gi - gh - gk) % 7;
+  const gm = Math.floor((ga + 11 * gh + 22 * gl) / 451);
+  const month = Math.floor((gh + gl - 7 * gm + 114) / 31);
+  const day = ((gh + gl - 7 * gm + 114) % 31) + 1;
   const easter = new Date(year, month - 1, day);
 
   function addDays(d, n) {
