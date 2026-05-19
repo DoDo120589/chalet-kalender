@@ -462,7 +462,7 @@
     <h1>Chalet Holland</h1>
     <p>Familien-Belegungsplan</p>
     <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
-    <button onclick="checkPw()">Anmelden</button>
+    <button id="login-btn">Anmelden</button>
     <div class="pw-error" id="pw-error">Falsches Passwort – bitte erneut versuchen.</div>
   </div>
 </div>
@@ -521,7 +521,7 @@
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzdLQcjakDM2GwV67E_uTxfboLDCJZptU8JU99pOvKJ_hAem6o-uXWLVJVyXO61puvA/exec";
+const API = "https://script.google.com/macros/s/AKfycbwhlZpydG1kGGwqkaPqmd8RbdE6AnqzT3xx_uXBNms-NXWn_9QvdAWLkxRtE5ChUYY/exec";
 const PASSWORD = "UBTJFSNM";
 
 let bookings = [];
@@ -609,6 +609,7 @@ function logout() {
   document.getElementById("pw-error").style.display = "none";
 }
 
+document.getElementById("login-btn").addEventListener("click", checkPw);
 document.getElementById("pw-input").addEventListener("keydown", e => {
   if (e.key === "Enter") checkPw();
 });
@@ -920,6 +921,15 @@ function escHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+window.checkPw = checkPw;
+window.logout = logout;
+window.changeMonth = changeMonth;
+window.closeModal = closeModal;
+window.handleModalBgClick = handleModalBgClick;
+window.saveNew = saveNew;
+window.saveEdit = saveEdit;
+window.deleteBooking = deleteBooking;
+window.editBooking = editBooking;
 </script>
 </body>
 </html>
